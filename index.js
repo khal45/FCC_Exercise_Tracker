@@ -87,7 +87,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
         // console.log(new Date(exercise.date).toDateString())
         res.json({
           _id: user._id,
-          usename: user.username,
+          username: user.username,
           description: exercise.description,
           duration: exercise.duration,
           date: new Date(exercise.date).toDateString()
