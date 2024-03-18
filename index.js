@@ -104,7 +104,40 @@ app.get('/api/users/:_id/logs', (req, res) => {
   (async () => {
     const { from, to, limit } = req.query;
     const id = req.params._id;
-    const User = await User.findById(id);
+    const user = await User.findById(id);
+    // if no user
+    if (!user) {
+      res.send("Could not find user")
+      return;
+    } else {
+      // create date object
+      let dateObj = {}
+      if (from) {
+        dateObj["$gte"] = new Date(from)
+      }
+      if (to) {
+        dateObj["$lte"] = new Date(to)
+      }
+      let filter = {
+        user_id: id
+      }
+      if (from || to) {
+        filter.date = dateObj;
+      }
+
+      const exercises = await Exercise.find(filter).limit(+limit ?? 500)
+      const log = exercises.map(exercise => ({
+        description: exercise.description,
+        duration: exercise.duration,
+        date: exercise.date.toDateString()
+      }))
+      res.json({
+        username: user.username,
+        count: exercises.length,
+        _id: user._id,
+        log
+      })
+    }
   })();
 })
 
